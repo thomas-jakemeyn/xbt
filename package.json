@@ -2,8 +2,6 @@
   "name": "xbt",
   "version": "1.0.0",
   "description": "Technology-agnostic build tool for monorepos",
-  "author": "",
-  "license": "MIT",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -17,23 +15,23 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
-    "@nestjs/common": "^6.0.0",
-    "@nestjs/core": "^6.0.0",
-    "reflect-metadata": "^0.1.12",
-    "rimraf": "^2.6.2",
-    "rxjs": "^6.3.3"
+    "@nestjs/common": "^6.1.1",
+    "@nestjs/core": "^6.1.1",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.5.1"
   },
   "devDependencies": {
-    "@nestjs/testing": "^6.0.0",
-    "@types/jest": "^23.3.13",
-    "@types/node": "^10.12.18",
-    "jest": "^23.6.0",
-    "prettier": "^1.15.3",
-    "ts-jest": "^23.10.5",
-    "ts-node": "^7.0.1",
-    "tsconfig-paths": "^3.7.0",
-    "tslint": "5.12.1",
-    "typescript": "^3.2.4"
+    "@nestjs/testing": "^6.1.1",
+    "@types/jest": "^24.0.12",
+    "@types/node": "^11.13.8",
+    "jest": "^24.7.1",
+    "prettier": "^1.17.0",
+    "rimraf": "^2.6.3",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.1.0",
+    "tsconfig-paths": "^3.8.0",
+    "tslint": "5.16.0",
+    "typescript": "^3.4.5"
   },
   "jest": {
     "moduleFileExtensions": [
