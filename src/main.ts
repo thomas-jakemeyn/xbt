@@ -47,7 +47,7 @@ async function bootstrap() {
 
   git.plugins.set('fs', fs);
   const dir = '.';
-  const gitdir = dir;
+  const gitdir = `${dir}/.git`;
 
   // case 1: compare branch with reference
   const ref = 'master';
@@ -57,7 +57,7 @@ async function bootstrap() {
   // Include changes since the first commit after the common ancestor of both the reference commit and the HEAD
   let commits = [];
   let currentCommit = headCommit;
-  while(currentCommit !== refCommit
+  while (currentCommit !== refCommit
     && !(await git.isDescendent({dir, oid: refCommit, ancestor: currentCommit, depth: '-1'}))) {
     commits = await git.log({ dir, depth: 2, ref: currentCommit });
     if (commits.length < 2) {
@@ -66,22 +66,25 @@ async function bootstrap() {
     }
     currentCommit = commits[1].oid;
   }
-  const firstCommit = commits.length > 0 ? commits[0] : null;
+  const firstCommit = currentCommit;
 
-  if (!firstCommit) {
+  if (firstCommit === headCommit) {
     console.log('No change detected');
     process.exit(0);
   }
-  console.log(`Include changes starting from commit ${firstCommit}`);
+  console.log(`Include changes between commit ${firstCommit} and commit ${headCommit}`);
 
   const trees = [
     git.TREE({fs, gitdir, ref: firstCommit}),
     git.TREE({fs, gitdir, ref: headCommit}),
   ];
-  const filter = async ([first, last]: git.WalkerEntry) => {
+  const filter = async ([first, head]: git.WalkerEntry) => {
+    if (first.exists !== head.exists) {
+      return true;
+    }
     await first.populateHash();
-    await last.populateHash();
-    return first.oid === last.oid;
+    await head.populateHash();
+    return first.oid !== head.oid;
   };
   const changes = await git.walkBeta1({trees, filter});
   console.log(changes);
