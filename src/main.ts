@@ -1,18 +1,18 @@
 import { NestFactory } from '@nestjs/core';
+import { DGraph } from '@thi.ng/dgraph';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import * as git from 'isomorphic-git';
 import { promisify } from 'util';
 import * as yaml from 'yaml';
 import { AppModule } from './app.module';
-import { AppService } from './app.service';
+import { ConfigService } from './config/config.service';
 
-import { DGraph } from '@thi.ng/dgraph';
 
 async function bootstrap() {
-  const context = await NestFactory.createApplicationContext(AppModule);
-  const appService = context.get<AppService>(AppService);
-  console.log(appService.getHello());
+  const context = await NestFactory.createApplicationContext(AppModule.forRoot({hello: 'world'}));
+  const configService = context.get<ConfigService>(ConfigService);
+  console.log(configService.params);
 
   // discover XBT files
   const workDir = '/Projects/monorepo';
@@ -54,7 +54,6 @@ async function bootstrap() {
   const refCommit = await git.resolveRef({ dir, ref });
   const headCommit = await git.resolveRef({ dir, ref: 'HEAD' });
 
-  // Include changes since the first commit after the common ancestor of both the reference commit and the HEAD
   let commits = [];
   let currentCommit = headCommit;
   while (currentCommit !== refCommit
