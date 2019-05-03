@@ -3,4 +3,4 @@ deps:
   - snd-data-service
 ...
 name: snd-data-service
-dir: ../../../snd-data-service
+dir: ../../snd-data-service
