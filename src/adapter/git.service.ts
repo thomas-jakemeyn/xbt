@@ -9,9 +9,13 @@ export class GitService {
     git.plugins.set('fs', fs);
   }
 
+  async getRoots(args: { items: InDir[] }) {
+    const promises = Promise.all(args.items.map(item => git.findRoot({ filepath: item.dir })));
+    return [...new Set(await promises)];
+  }
+
   async diff(args: { dir: string; ref: string }): Promise<string[]> {
-    const dir = '/Projects/xbt';  // FIXME: get `dir` from `args`
-    const { ref } = args;
+    const { dir, ref } = args;
     const refCommit = await git.resolveRef({ dir, ref });
     const headCommit = await git.resolveRef({ dir, ref: 'HEAD' });
     let currentCommit = headCommit;
@@ -52,4 +56,8 @@ export class GitService {
     const commits = await git.log({ dir: args.dir, depth: 2, ref: args.commit });
     return commits.length < 2 ? null : commits[1].oid;
   }
+}
+
+export interface InDir {
+  dir: string;
 }

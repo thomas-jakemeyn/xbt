@@ -6,8 +6,8 @@ import { ConfigParams } from './config/config.service';
 async function bootstrap() {
   const params: ConfigParams = {
     manifestGlob: '**/.xbt.yml',
-    ref: 'master',
-    rootDir: '/Projects/monorepo',
+    ref: 'develop',
+    rootDir: process.cwd(),
   };
   const appModule = AppModule.forRoot(params);
   const appContext = await NestFactory.createApplicationContext(appModule);
