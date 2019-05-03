@@ -7,12 +7,14 @@ import { promisify } from 'util';
 import * as yaml from 'yaml';
 import { AppModule } from './app.module';
 import { ConfigService } from './config/config.service';
-
+import { AppService } from './config/app.service';
 
 async function bootstrap() {
-  const context = await NestFactory.createApplicationContext(AppModule.forRoot({hello: 'world'}));
-  const configService = context.get<ConfigService>(ConfigService);
-  console.log(configService.params);
+  const params = {};
+  const appModule = AppModule.forRoot(params);
+  const appContext = await NestFactory.createApplicationContext(appModule);
+  const appService = appContext.get<AppService>(AppService);
+  appService.run();
 
   // discover XBT files
   const workDir = '/Projects/monorepo';

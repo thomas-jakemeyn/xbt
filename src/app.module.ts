@@ -1,7 +1,10 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { GlobalModule } from './global.module';
+import { AppService } from './config/app.service';
 
-@Module({})
+@Module({
+  providers: [AppService],
+})
 export class AppModule {
   static forRoot(params): DynamicModule {
     return {
