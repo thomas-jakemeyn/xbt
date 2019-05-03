@@ -6,8 +6,7 @@ import * as git from 'isomorphic-git';
 import { promisify } from 'util';
 import * as yaml from 'yaml';
 import { AppModule } from './app.module';
-import { ConfigService } from './config/config.service';
-import { AppService } from './config/app.service';
+import { AppService } from './app.service';
 
 async function bootstrap() {
   const params = {};

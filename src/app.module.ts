@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { GlobalModule } from './global.module';
-import { AppService } from './config/app.service';
+import { AppService } from './app.service';
 
 @Module({
   providers: [AppService],
