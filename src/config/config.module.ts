@@ -1,4 +1,4 @@
-import { Module, DynamicModule, Provider } from '@nestjs/common';
+import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { ConfigService } from './config.service';
 
 @Module({})

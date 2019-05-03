@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import * as fs from 'fs';
 import * as git from 'isomorphic-git';
-import * as path from 'path';
+import { NodeService } from './node.service';
 
 @Injectable()
 export class GitService {
-  constructor() {
-    git.plugins.set('fs', fs);
+  constructor(private node: NodeService) {
+    git.plugins.set('fs', node.fs);
   }
 
   async getRoots(args: { items: InDir[] }) {
@@ -33,7 +32,7 @@ export class GitService {
     const [PATH, ORIGINAL_STATUS, CURRENT_STATUS] = [0, 1, 2];
     return files
       .filter(file => file[ORIGINAL_STATUS] !== file[CURRENT_STATUS])
-      .map(file => path.join(dir, file[PATH] as string));
+      .map(file => this.node.path.join(dir, file[PATH] as string));
   }
 
   private async isPath(args: {

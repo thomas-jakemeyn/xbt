@@ -1,7 +1,6 @@
 name: snd
-dir: .
 deps:
   - snd-data-service
 ...
 name: snd-data-service
-dir: /Projects/snd-data-service
+dir: ../../../snd-data-service

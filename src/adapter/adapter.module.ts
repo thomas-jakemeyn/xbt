@@ -1,11 +1,20 @@
 import { Module } from '@nestjs/common';
-import { GlobService } from './glob.service';
-import { YamlService } from './yaml.service';
 import { DagService } from './dag.service';
 import { GitService } from './git.service';
+import { GlobService } from './glob.service';
+import { NodeService } from './node.service';
+import { YamlService } from './yaml.service';
+
+const providers = [
+  DagService,
+  GitService,
+  GlobService,
+  NodeService,
+  YamlService,
+];
 
 @Module({
-  providers: [DagService, GitService, GlobService, YamlService],
-  exports: [DagService, GitService, GlobService, YamlService],
+  providers,
+  exports: providers,
 })
 export class AdapterModule {}

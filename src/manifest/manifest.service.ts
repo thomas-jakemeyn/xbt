@@ -1,23 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from 'src/config/config.service';
 import { GlobService } from 'src/adapter/glob.service';
 import { YamlService } from 'src/adapter/yaml.service';
+import { ConfigService } from 'src/config/config.service';
+import { NodeService } from 'src/adapter/node.service';
 
 @Injectable()
 export class ManifestService {
   constructor(
     private config: ConfigService,
     private glob: GlobService,
+    private node: NodeService,
     private yaml: YamlService,
   ) {}
 
   async getManifests(): Promise<{[index: string]: Manifest}> {
     const { manifestGlob: pattern, rootDir } = this.config;
     const manifestPaths = await this.glob.find({ pattern, rootDir });
-    const manifests = await this.yaml.parse<Manifest>(manifestPaths);
-    return manifests.reduce((index, manifest, i) => {
-      return { ...index, [manifest.name]: { dir: manifestPaths[i], ...manifest } };
+    const manifestsByPath = await this.yaml.parse<Manifest>(manifestPaths);
+    return Object.keys(manifestsByPath).reduce((output, path) => {
+      manifestsByPath[path]
+        .map(manifest => {
+          return {
+            ...manifest,
+            dir: this.getManifestDir({ manifest, path }),
+          };
+        })
+        .forEach(manifest => {
+          output[manifest.name] = manifest;
+        });
+      return output;
     }, {});
+  }
+
+  private getManifestDir(args: { manifest: Manifest, path: string }): string {
+    if (!args.manifest.dir || this.node.path.isAbsolute(args.manifest.dir)) {
+      return args.path;
+    }
+    const join = this.node.path.join(args.path, args.manifest.dir);
+    return this.node.path.resolve(join);
   }
 }
 

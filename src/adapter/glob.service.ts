@@ -1,5 +1,5 @@
-import * as glob from 'glob';
 import { Injectable } from '@nestjs/common';
+import * as glob from 'glob';
 import { promisify } from 'util';
 
 @Injectable()
