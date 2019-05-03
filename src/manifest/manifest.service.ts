@@ -3,10 +3,6 @@ import { ConfigService } from 'src/config/config.service';
 import { GlobService } from 'src/adapter/glob.service';
 import { YamlService } from 'src/adapter/yaml.service';
 
-export interface Manifest {
-  name: string;
-}
-
 @Injectable()
 export class ManifestService {
   constructor(
@@ -23,4 +19,9 @@ export class ManifestService {
       return { ...index, [manifest.name]: manifest };
     }, {});
   }
+}
+
+export interface Manifest {
+  name: string;
+  deps: string[];
 }

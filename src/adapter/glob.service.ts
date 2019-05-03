@@ -2,11 +2,6 @@ import * as glob from 'glob';
 import { Injectable } from '@nestjs/common';
 import { promisify } from 'util';
 
-export interface FindParams {
-  pattern: string;
-  workDir: string;
-}
-
 @Injectable()
 export class GlobService {
 
@@ -16,4 +11,9 @@ export class GlobService {
       realpath: true,
     });
   }
+}
+
+export interface FindParams {
+  pattern: string;
+  workDir: string;
 }
