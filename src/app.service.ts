@@ -5,7 +5,8 @@ import { ManifestService } from './manifest/manifest.service';
 export class AppService {
   constructor(private manifestService: ManifestService) {}
 
-  run() {
-    this.manifestService.getManifests();
+  async run() {
+    const manifests = await this.manifestService.getManifests();
+    console.log(manifests);
   }
 }

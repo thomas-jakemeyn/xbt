@@ -12,11 +12,12 @@ import { ConfigParams } from './config/config.service';
 async function bootstrap() {
   const params: ConfigParams = {
     manifestGlob: '**/.xbt.yml',
+    workDir: '/Projects/monorepo',
   };
   const appModule = AppModule.forRoot(params);
   const appContext = await NestFactory.createApplicationContext(appModule);
   const appService = appContext.get<AppService>(AppService);
-  appService.run();
+  await appService.run();
 
   // discover XBT files
   const workDir = '/Projects/monorepo';
