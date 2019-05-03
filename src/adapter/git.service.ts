@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as git from 'isomorphic-git';
+import * as path from 'path';
 
 @Injectable()
 export class GitService {
@@ -9,7 +10,7 @@ export class GitService {
   }
 
   async diff(args: { dir: string; ref: string }): Promise<string[]> {
-    const dir = '.';  // FIXME: get `dir` from `args`
+    const dir = '/Projects/xbt';  // FIXME: get `dir` from `args`
     const { ref } = args;
     const refCommit = await git.resolveRef({ dir, ref });
     const headCommit = await git.resolveRef({ dir, ref: 'HEAD' });
@@ -28,7 +29,7 @@ export class GitService {
     const [PATH, ORIGINAL_STATUS, CURRENT_STATUS] = [0, 1, 2];
     return files
       .filter(file => file[ORIGINAL_STATUS] !== file[CURRENT_STATUS])
-      .map(file => file[PATH] as string);
+      .map(file => path.join(dir, file[PATH] as string));
   }
 
   private async isPath(args: {
