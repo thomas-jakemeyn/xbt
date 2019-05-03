@@ -1,4 +1,5 @@
 name: snd
+dir: ..
 deps:
   - snd-data-service
 ...

@@ -32,5 +32,12 @@ export class AppService {
     const changes = _.flatten(changesByGitRoot);
     console.log('\nCHANGES');
     console.log(changes);
+
+    const toBuild = dag
+      .sort()
+      .filter(manifest => changes.some(change => change.startsWith(manifest.dir)))
+      .map(manifest => manifest.name);
+      console.log('\nTO BUILD');
+      console.log(toBuild);
   }
 }
