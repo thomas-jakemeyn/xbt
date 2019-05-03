@@ -15,8 +15,8 @@ export class ManifestService {
     const { manifestGlob: pattern, rootDir } = this.config;
     const manifestPaths = await this.glob.find({ pattern, rootDir });
     const manifests = await this.yaml.parse<Manifest>(manifestPaths);
-    return manifests.reduce((index, manifest) => {
-      return { ...index, [manifest.name]: manifest };
+    return manifests.reduce((index, manifest, i) => {
+      return { ...index, [manifest.name]: { dir: manifestPaths[i], ...manifest } };
     }, {});
   }
 }
@@ -24,4 +24,5 @@ export class ManifestService {
 export interface Manifest {
   name: string;
   deps?: string[];
+  dir: string;
 }
