@@ -21,30 +21,14 @@ export class GitService {
     const startCommit = currentCommit;
 
     if (!startCommit) {
-      throw new Error(`HEAD and ${ref} have no ancestor in common!`);
-    }
-    if (startCommit === headCommit) {
-      // No change detected
-      return [];
+      throw new Error(`HEAD and ${ref} have no common ancestor!`);
     }
 
-    // Include all changes starting from startCommit
-    const gitdir = `${dir}/.git`;
-    const trees = [
-      git.TREE({ fs, gitdir, ref: startCommit }),
-      git.TREE({ fs, gitdir, ref: headCommit }),
-    ];
-    const map = async ([start, head]: git.WalkerEntry): Promise<string> => {
-      if (start.exists !== head.exists) {
-        return head.fullpath;
-      }
-      await start.populateHash();
-      await head.populateHash();
-      if (start.oid !== head.oid) {
-        return head.fullpath;
-      }
-    };
-    return git.walkBeta1<string, string[]>({ trees, map });
+    const files = await git.statusMatrix({ dir, ref: currentCommit });
+    const [PATH, ORIGINAL_STATUS, CURRENT_STATUS] = [0, 1, 2];
+    return files
+      .filter(file => file[ORIGINAL_STATUS] !== file[CURRENT_STATUS])
+      .map(file => file[PATH] as string);
   }
 
   private async isPath(args: {
