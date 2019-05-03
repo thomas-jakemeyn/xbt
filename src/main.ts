@@ -7,9 +7,12 @@ import { promisify } from 'util';
 import * as yaml from 'yaml';
 import { AppModule } from './app.module';
 import { AppService } from './app.service';
+import { ConfigParams } from './config/config.service';
 
 async function bootstrap() {
-  const params = {};
+  const params: ConfigParams = {
+    manifestGlob: '**/.xbt.yml',
+  };
   const appModule = AppModule.forRoot(params);
   const appContext = await NestFactory.createApplicationContext(appModule);
   const appService = appContext.get<AppService>(AppService);
