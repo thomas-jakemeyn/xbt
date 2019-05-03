@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 export interface ConfigParams {
   manifestGlob: string;
-  workDir: string;
+  ref: string;
+  rootDir: string;
 }
 
 @Injectable()
@@ -13,7 +14,11 @@ export class ConfigService {
     return this.params.manifestGlob;
   }
 
-  get workDir() {
-    return this.params.workDir;
+  get ref() {
+    return this.params.ref;
+  }
+
+  get rootDir() {
+    return this.params.rootDir;
   }
 }

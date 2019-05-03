@@ -5,15 +5,13 @@ import { promisify } from 'util';
 @Injectable()
 export class GlobService {
 
-  async find(params: FindParams): Promise<string[]> {
-    return await promisify(glob)(params.pattern, {
-      cwd: params.workDir,
+  async find(args: {
+    pattern: string,
+    rootDir: string,
+  }): Promise<string[]> {
+    return await promisify(glob)(args.pattern, {
+      cwd: args.rootDir,
       realpath: true,
     });
   }
-}
-
-export interface FindParams {
-  pattern: string;
-  workDir: string;
 }

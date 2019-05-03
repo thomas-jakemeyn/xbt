@@ -20,7 +20,7 @@ export class DagService {
 }
 
 export interface WithDeps<T> {
-  deps: T[];
+  deps?: T[];
 }
 
 export interface Dag<T> {

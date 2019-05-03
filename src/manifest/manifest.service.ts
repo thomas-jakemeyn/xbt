@@ -12,8 +12,8 @@ export class ManifestService {
   ) {}
 
   async getManifests(): Promise<{[index: string]: Manifest}> {
-    const { manifestGlob: pattern, workDir } = this.config;
-    const manifestPaths = await this.glob.find({ pattern, workDir });
+    const { manifestGlob: pattern, rootDir } = this.config;
+    const manifestPaths = await this.glob.find({ pattern, rootDir });
     const manifests = await this.yaml.parse<Manifest>(manifestPaths);
     return manifests.reduce((index, manifest) => {
       return { ...index, [manifest.name]: manifest };
@@ -23,5 +23,5 @@ export class ManifestService {
 
 export interface Manifest {
   name: string;
-  deps: string[];
+  deps?: string[];
 }
