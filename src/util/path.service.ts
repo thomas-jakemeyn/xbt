@@ -5,6 +5,21 @@ import { NodeService } from 'src/adapter/node.service';
 export class PathService {
   constructor(private node: NodeService) {}
 
+  findClosest<T>(args: {
+    path: string;
+    candidates: Array<T & InDir> | {[index: string]: T & InDir};
+  }): T {
+    const candidates = Array.isArray(args.candidates) ? args.candidates : Object.values(args.candidates);
+    const sorted = candidates.reduce((output: Array<T & InDir>, candidate: T & InDir) => {
+      const distance = this.distance({ path1: args.path, path2: candidate.dir });
+      if (distance) {
+        output[distance] = candidate;
+      }
+      return output;
+    }, []);
+    return sorted.length <= 0 ? null : sorted.find(candidate => !!candidate);
+  }
+
   distance(args: { path1: string; path2: string; }) {
     const { path1, path2 } = args;
     let ancestor: string = null;
@@ -26,4 +41,8 @@ export class PathService {
     const parts = diff.split(this.node.path.sep).filter(part => !!part);
     return parts.length;
   }
+}
+
+export interface InDir {
+  dir: string;
 }

@@ -4,10 +4,11 @@ import { DGraph } from '@thi.ng/dgraph';
 @Injectable()
 export class DagService {
 
-  newDag<T>(nodes?: {[index: string]: T & WithDeps<string>}): Dag<T> {
+  newDag<T>(nodes?: Array<T & WithDeps<string>> | {[index: string]: T & WithDeps<string>}): Dag<T> {
     const dag = new DagAdapter<T>();
     if (nodes) {
-      Object.values(nodes).forEach(node => {
+      const nodesArray = Array.isArray(nodes) ? nodes : Object.values(nodes);
+      nodesArray.forEach(node => {
         if (node.deps && node.deps.length > 0) {
           node.deps.forEach(dep => dag.addNode(node, nodes[dep]));
         } else {

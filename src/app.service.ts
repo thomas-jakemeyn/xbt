@@ -4,6 +4,7 @@ import { DagService } from './adapter/dag.service';
 import { GitService } from './adapter/git.service';
 import { ConfigService } from './config/config.service';
 import { ManifestService } from './manifest/manifest.service';
+import { PathService } from './util/path.service';
 
 @Injectable()
 export class AppService {
@@ -11,7 +12,8 @@ export class AppService {
     private config: ConfigService,
     private dagService: DagService,
     private gitService: GitService,
-    private manifestService: ManifestService) {}
+    private manifestService: ManifestService,
+    private pathService: PathService) {}
 
   async run() {
     const { ref } = this.config;
@@ -38,10 +40,7 @@ export class AppService {
     console.log(changes);
 
     changes.forEach(change => {
-      const manifest = this.manifestService.findManifest({
-        path: change,
-        manifests: Object.values(manifests),
-      });
+      const manifest = this.pathService.findClosest({ path: change, candidates: manifests });
       manifest.changes.push(change);
     });
     console.log('\nMANIFEST WITH CHANGES');
