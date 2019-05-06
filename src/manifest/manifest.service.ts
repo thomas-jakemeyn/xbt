@@ -3,6 +3,7 @@ import { GlobService } from 'src/adapter/glob.service';
 import { YamlService } from 'src/adapter/yaml.service';
 import { ConfigService } from 'src/config/config.service';
 import { NodeService } from 'src/adapter/node.service';
+import { PathService } from 'src/util/path.service';
 
 @Injectable()
 export class ManifestService {
@@ -10,6 +11,7 @@ export class ManifestService {
     private config: ConfigService,
     private glob: GlobService,
     private node: NodeService,
+    private path: PathService,
     private yaml: YamlService,
   ) {}
 
@@ -23,6 +25,7 @@ export class ManifestService {
           return {
             ...manifest,
             dir: this.getManifestDir({ manifest, path }),
+            changes: [],
           };
         })
         .forEach(manifest => {
@@ -30,6 +33,23 @@ export class ManifestService {
         });
       return output;
     }, {});
+  }
+
+  findManifest(args: { path: string; manifests: Manifest[]; }): Manifest {
+    if (args.manifests.length <= 0) {
+      return null;
+    }
+    return args.manifests.sort((a, b) => {
+      const distanceA = this.path.distance({
+        path1: args.path,
+        path2: a.dir,
+      });
+      const distanceB = this.path.distance({
+        path1: args.path,
+        path2: b.dir,
+      });
+      return distanceA - distanceB;
+    })[0];
   }
 
   private getManifestDir(args: { manifest: Manifest, path: string }): string {
@@ -49,4 +69,5 @@ export interface Manifest {
   name: string;
   deps?: string[];
   dir: string;
+  changes: string[];
 }

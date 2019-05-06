@@ -24,20 +24,27 @@ export class AppService {
     console.log('\nDAG');
     console.log(dag.sort());
 
-    const gitRoots = await this.gitService.getRoots({ items: Object.values(manifests) });
+    const gitRoots = await this.gitService.getRoots({
+      items: Object.values(manifests),
+    });
     console.log('\nGIT ROOTS');
     console.log(gitRoots);
 
-    const changesByGitRoot = await Promise.all(gitRoots.map(gitRoot => this.gitService.diff({ dir: gitRoot, ref })));
+    const changesByGitRoot = await Promise.all(
+      gitRoots.map(gitRoot => this.gitService.diff({ dir: gitRoot, ref })),
+    );
     const changes = _.flatten(changesByGitRoot);
     console.log('\nCHANGES');
     console.log(changes);
 
-    const toBuild = dag
-      .sort()
-      .filter(manifest => changes.some(change => change.startsWith(manifest.dir)))
-      .map(manifest => manifest.name);
-      console.log('\nTO BUILD');
-      console.log(toBuild);
+    changes.forEach(change => {
+      const manifest = this.manifestService.findManifest({
+        path: change,
+        manifests: Object.values(manifests),
+      });
+      manifest.changes.push(change);
+    });
+    console.log('\nMANIFEST WITH CHANGES');
+    console.log(manifests);
   }
 }
