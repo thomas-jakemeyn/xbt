@@ -17,7 +17,7 @@ export class PathService {
       descendent = path1;
     } else if (path2.startsWith(path1)) {
       ancestor = path1;
-      descendent = path1;
+      descendent = path2;
     }
     if (!ancestor || !descendent) {
       return null;
