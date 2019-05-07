@@ -5,6 +5,7 @@ import { ConfigParams } from './config/config.service';
 
 async function bootstrap() {
   const params: ConfigParams = {
+    cmd: 'build',
     manifestGlob: '**/.xbt.yml',
     ref: 'develop',
     rootDir: process.cwd(),

@@ -2,6 +2,10 @@ name: snd
 dir: ..
 deps:
   - snd-data-service
+cmd:
+  build: make build  
 ...
 name: snd-data-service
 dir: ../../snd-data-service
+cmd:
+  build: make build 

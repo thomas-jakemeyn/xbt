@@ -53,6 +53,7 @@ interface RawManifest {
   name: string;
   deps?: string[];
   dir: string;
+  cmd: { [index: string]: string };
 }
 export interface Manifest extends RawManifest {
   changes: string[];

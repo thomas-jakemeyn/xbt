@@ -1,19 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import * as _ from 'lodash';
 import { DagService } from './adapter/dag.service';
 import { GitService } from './adapter/git.service';
 import { ConfigService } from './config/config.service';
 import { ManifestService } from './manifest/manifest.service';
 import { PathService } from './util/path.service';
+import { DepsService } from './adapter/deps.service';
 
 @Injectable()
 export class AppService {
+  private lodash;
+
   constructor(
     private config: ConfigService,
     private dagService: DagService,
+    depsService: DepsService,
     private gitService: GitService,
     private manifestService: ManifestService,
-    private pathService: PathService) {}
+    private pathService: PathService) {
+      this.lodash = depsService.lodash();
+    }
 
   async run() {
     const { ref } = this.config;
@@ -31,7 +36,7 @@ export class AppService {
     const changesByGitRoot = await Promise.all(
       gitRoots.map(gitRoot => this.gitService.diff({ dir: gitRoot, ref })),
     );
-    const changes = _.flatten(changesByGitRoot);
+    const changes = this.lodash.flatten(changesByGitRoot);
     console.log('\nCHANGES');
     console.log(changes);
 
@@ -49,7 +54,17 @@ export class AppService {
         dag.getDependents(manifest).forEach(dependent => dependent.dirty = true);
       }
     });
-    console.log('\nDAG');
-    console.log(dag.sort());
+    const topology = dag.sort();
+    console.log('\nTOPOLOGY');
+    console.log(topology);
+
+    const cmdPaths = this.config.cmd.map(cmd => `cmd.${cmd}`);
+    const script = topology
+      .filter(manifest => manifest.dirty)
+      .reduce((acc, manifest) => {
+        return [ ...acc, ...this.lodash.at(manifest, cmdPaths) ];
+      }, []);
+    console.log('\nSCRIPT');
+    console.log(script);
   }
 }
