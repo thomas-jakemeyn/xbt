@@ -11,10 +11,10 @@ export class Logger {
   error: LogMethod;
 
   constructor(deps: DepsService, namespace: string) {
-    this.debug = Logger.createLogMethod(deps, `${namespace}:debug`);
-    this.info = Logger.createLogMethod(deps, `${namespace}:info`);
-    this.warn = Logger.createLogMethod(deps, `${namespace}:warn`);
-    this.error = Logger.createLogMethod(deps, `${namespace}:error`);
+    this.debug = Logger.createLogMethod(deps, `xbt:${namespace}:debug`);
+    this.info = Logger.createLogMethod(deps, `xbt:${namespace}`);
+    this.warn = Logger.createLogMethod(deps, `xbt:${namespace}:warn`);
+    this.error = Logger.createLogMethod(deps, `xbt:${namespace}:error`);
   }
 
   static createLogMethod(deps: DepsService, namespace: string): LogMethod {
