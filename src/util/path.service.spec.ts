@@ -38,6 +38,31 @@ describe('PathService', () => {
     });
   });
 
+  describe('findClosest()', () => {
+    it('should return the closest ancestor', () => {
+      const expected = { dir: buildPath('projects', 'monorepo', 'web', 'app') };
+      expect(pathService.findClosest({
+        path: buildPath('projects', 'monorepo', 'web', 'app', 'package.json'),
+        candidates: [
+          expected,
+          { dir: buildPath('projects', 'monorepo', 'web') },
+          { dir: buildPath('projects', 'monorepo', 'data') },
+          { dir: buildPath('projects', 'monorepo') },
+        ],
+      })).toBe(expected);
+    });
+
+    it('should return null when none of the candidates is an ancestor', () => {
+      expect(pathService.findClosest({
+        path: buildPath('projects', 'monorepo', 'web', 'app', 'package.json'),
+        candidates: [
+          { dir: buildPath('projects', 'monorepo', 'data') },
+          { dir: buildPath('projects', 'monorepo', 'api') },
+        ],
+      })).toBe(null);
+    });
+  });
+
   function buildPath(...parts: string[]) {
     return path.join(...parts);
   }
