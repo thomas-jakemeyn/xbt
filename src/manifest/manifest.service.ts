@@ -34,15 +34,15 @@ export class ManifestService {
   }
 
   private getManifestDir(args: { manifest: Manifest, path: string }): string {
-    const dir = this.node.path.dirname(args.path);
+    const dir = this.node.path().dirname(args.path);
     if (!args.manifest.dir) {
       return dir;
     }
-    if (this.node.path.isAbsolute(args.manifest.dir)) {
+    if (this.node.path().isAbsolute(args.manifest.dir)) {
       return args.manifest.dir;
     }
-    const join = this.node.path.join(dir, args.manifest.dir);
-    return this.node.path.resolve(join);
+    const join = this.node.path().join(dir, args.manifest.dir);
+    return this.node.path().resolve(join);
   }
 }
 

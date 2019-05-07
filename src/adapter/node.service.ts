@@ -5,11 +5,11 @@ import * as path from 'path';
 @Injectable()
 export class NodeService {
 
-  get fs() {
+  fs() {
     return fs;
   }
 
-  get path() {
+  path() {
     return path;
   }
 }

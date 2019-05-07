@@ -10,7 +10,7 @@ export class GitService {
     deps: DepsService,
     private node: NodeService) {
     this.git = deps.git();
-    this.git.plugins.set('fs', node.fs);
+    this.git.plugins.set('fs', node.fs());
   }
 
   async getRoots(args: { items: InDir[] }) {
@@ -37,7 +37,7 @@ export class GitService {
     const [PATH, ORIGINAL_STATUS, CURRENT_STATUS] = [0, 1, 2];
     return files
       .filter(file => file[ORIGINAL_STATUS] !== file[CURRENT_STATUS])
-      .map(file => this.node.path.join(dir, file[PATH] as string));
+      .map(file => this.node.path().join(dir, file[PATH] as string));
   }
 
   private async isPath(args: {

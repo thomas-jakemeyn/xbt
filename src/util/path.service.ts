@@ -38,7 +38,7 @@ export class PathService {
       return null;
     }
     const diff = descendent.substr(ancestor.length);
-    const parts = diff.split(this.node.path.sep).filter(part => !!part);
+    const parts = diff.split(this.node.path().sep).filter(part => !!part);
     return parts.length;
   }
 }
