@@ -22,10 +22,6 @@ export class AppService {
     console.log('\nMANIFESTS');
     console.log(manifests);
 
-    const dag = this.dagService.newDag(manifests);
-    console.log('\nDAG');
-    console.log(dag.sort());
-
     const gitRoots = await this.gitService.getRoots({
       items: Object.values(manifests),
     });
@@ -45,5 +41,15 @@ export class AppService {
     });
     console.log('\nMANIFEST WITH CHANGES');
     console.log(manifests);
+
+    const dag = this.dagService.newDag(manifests);
+    Object.values(manifests).forEach(manifest => {
+      if (manifest.changes.length > 0) {
+        manifest.dirty = true;
+        dag.getDependents(manifest).forEach(dependent => dependent.dirty = true);
+      }
+    });
+    console.log('\nDAG');
+    console.log(dag.sort());
   }
 }

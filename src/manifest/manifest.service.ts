@@ -16,16 +16,10 @@ export class ManifestService {
   async getManifests(): Promise<{[index: string]: Manifest}> {
     const { manifestGlob: pattern, rootDir } = this.config;
     const manifestPaths = await this.glob.find({ pattern, rootDir });
-    const manifestsByPath = await this.yaml.parse<Manifest>(manifestPaths);
+    const manifestsByPath = await this.yaml.parse<RawManifest>(manifestPaths);
     return Object.keys(manifestsByPath).reduce((output, path) => {
       manifestsByPath[path]
-        .map(manifest => {
-          return {
-            ...manifest,
-            dir: this.getManifestDir({ manifest, path }),
-            changes: [],
-          };
-        })
+        .map(manifest => this.initManifest({ manifest, path }))
         .forEach(manifest => {
           output[manifest.name] = manifest;
         });
@@ -33,7 +27,16 @@ export class ManifestService {
     }, {});
   }
 
-  private getManifestDir(args: { manifest: Manifest, path: string }): string {
+  private initManifest(args: { manifest: RawManifest; path: string; }): Manifest {
+    return {
+      ...args.manifest,
+      dir: this.getManifestDir(args),
+      changes: [],
+      dirty: false,
+    };
+  }
+
+  private getManifestDir(args: { manifest: RawManifest, path: string }): string {
     const dir = this.node.path().dirname(args.path);
     if (!args.manifest.dir) {
       return dir;
@@ -46,9 +49,12 @@ export class ManifestService {
   }
 }
 
-export interface Manifest {
+interface RawManifest {
   name: string;
   deps?: string[];
   dir: string;
+}
+export interface Manifest extends RawManifest {
   changes: string[];
+  dirty: boolean;
 }

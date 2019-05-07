@@ -28,6 +28,7 @@ export interface WithDeps<T> {
 
 export interface Dag<T> {
   addNode(node: T, dep?: T);
+  getDependents(node: T): T[];
   sort(): T[];
 }
 
@@ -44,6 +45,12 @@ class DagAdapter<T> implements Dag<T> {
     } else {
       this.dag.addNode(node);
     }
+  }
+
+  getDependents(node: T): T[] {
+    return [
+      ...this.dag.transitiveDependents(node),
+    ];
   }
 
   sort(): T[] {
