@@ -11,7 +11,7 @@ async function bootstrap() {
     rootDir: process.cwd(),
   };
   const appModule = AppModule.forRoot(params);
-  const appContext = await NestFactory.createApplicationContext(appModule);
+  const appContext = await NestFactory.createApplicationContext(appModule, { logger: false });
   const appService = appContext.get<AppService>(AppService);
   await appService.run();
 }

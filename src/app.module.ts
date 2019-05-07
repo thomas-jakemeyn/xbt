@@ -2,9 +2,13 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { GlobalModule } from './global.module';
 import { AppService } from './app.service';
 import { ManifestModule } from './manifest/manifest.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
-  imports: [ManifestModule],
+  imports: [
+    LoggerModule.forFeature('xbt'),
+    ManifestModule,
+  ],
   providers: [AppService],
 })
 export class AppModule {
