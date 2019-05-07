@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { DepsService } from './deps.service';
 import { DGraph } from '@thi.ng/dgraph';
 
 @Injectable()
 export class DagService {
+  constructor(private deps: DepsService) {}
 
   newDag<T>(nodes?: Array<T & WithDeps<string>> | {[index: string]: T & WithDeps<string>}): Dag<T> {
-    const dag = new DagAdapter<T>();
+    const dag = new DagAdapter<T>(this.deps.newDGraph);
     if (nodes) {
       const nodesArray = Array.isArray(nodes) ? nodes : Object.values(nodes);
       nodesArray.forEach(node => {
@@ -30,7 +32,11 @@ export interface Dag<T> {
 }
 
 class DagAdapter<T> implements Dag<T> {
-  private dag = new DGraph<T>();
+  private dag: DGraph<T>;
+
+  constructor(newDGraph: <U>() => DGraph<U>) {
+    this.dag = newDGraph<T>();
+  }
 
   addNode(node: T, dep?: T) {
     if (dep) {

@@ -4,9 +4,11 @@ import { GitService } from './git.service';
 import { GlobService } from './glob.service';
 import { NodeService } from './node.service';
 import { YamlService } from './yaml.service';
+import { DepsService } from './deps.service';
 
 const providers = [
   DagService,
+  DepsService,
   GitService,
   GlobService,
   NodeService,
