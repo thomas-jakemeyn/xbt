@@ -3,7 +3,8 @@ dir: ..
 deps:
   - snd-data-service
 cmd:
-  build: make build  
+  build: make build 
+  publish: make publish
 ...
 name: snd-data-service
 dir: ../../snd-data-service

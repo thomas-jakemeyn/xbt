@@ -61,9 +61,13 @@ export class AppService {
     const cmdPaths = this.config.cmd.map(cmd => `cmd.${cmd}`);
     const script = topology
       .filter(manifest => manifest.dirty)
-      .reduce((acc, manifest) => {
-        return [ ...acc, ...this.lodash.at(manifest, cmdPaths) ];
-      }, []);
+      .map(manifest => {
+        const commands = this.lodash
+          .at(manifest, cmdPaths)
+          .filter(cmd => !!cmd);
+        return `(cd ${manifest.dir} && ${commands.join(' && ')})`;
+      })
+      .join(' \\\n&& ');
     console.log('\nSCRIPT');
     console.log(script);
   }
