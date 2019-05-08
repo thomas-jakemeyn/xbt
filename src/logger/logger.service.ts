@@ -7,7 +7,7 @@ type LogMethod = (template: any, ...args: any[]) => void;
 export class Logger {
   private readonly PREFIX = 'xbt';
   private readonly STYLES = {
-    h1: 'black.bgYellow.bold',
+    h1: 'yellow.bold.underline',
   };
   debug: LogMethod;
   info: LogMethod;
