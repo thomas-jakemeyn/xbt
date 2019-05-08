@@ -33,17 +33,17 @@ export class AppService {
   }
 
   async getManifests(): Promise<{[index: string]: Manifest}> {
-    this.logger.h1('Looking for manifest files...');
+    this.logger.h1('Searching for components...');
     const manifests = await this.manifestService.getManifests();
     const manifestNames = Object.keys(manifests);
     const manifestsArray = Object.values(manifests);
-    this.logger.info('Found %o manifest(s): %O', manifestNames.length, manifestNames);
-    this.logger.debug('%O', manifestsArray);
+    this.logger.info('Found %o component(s): %O', manifestNames.length, manifestsArray.map(manifest => manifest.dir));
+    this.logger.debug('Manifests: %O', manifestsArray);
     return manifests;
   }
 
   async getGitRoots(manifests: {[index: string]: Manifest}): Promise<string[]> {
-    this.logger.h1('Looking for git root directories...');
+    this.logger.h1('Searching for git root directories...');
     const gitRoots = await this.gitService.getRoots({
       items: Object.values(manifests),
     });
@@ -52,7 +52,7 @@ export class AppService {
   }
 
   async getChanges(ref, gitRoots: string[]): Promise<string[]> {
-    this.logger.h1('Looking for file changes...');
+    this.logger.h1('Detecting file changes...');
     const changesByGitRoot = await Promise.all(
       gitRoots.map(gitRoot => this.gitService.diff({ dir: gitRoot, ref })),
     );
@@ -62,11 +62,12 @@ export class AppService {
   }
 
   async attachChangesToManifests(changes: string[], manifests: {[index: string]: Manifest}) {
-    this.logger.h1('Attaching file changes to manifests...');
+    this.logger.h1('Linking file changes to components...');
     changes.forEach(change => {
       const manifest = this.pathService.findClosest({ path: change, candidates: manifests });
       manifest.changes.push(change);
     });
+    this.logger.debug('Manifests: %O', Object.values(manifests));
   }
 
   getTopology(manifests: {[index: string]: Manifest}): Manifest[] {
@@ -80,9 +81,9 @@ export class AppService {
     });
     const sorted = dag.sort();
     const topology = sorted.filter(manifest => manifest.dirty);
-    this.logger.info('Identified %o components to build in the following order: %O',
+    this.logger.info('Identified %o dirty components: %O',
       topology.length, topology.map(manifest => manifest.name));
-    this.logger.debug('DAG: %O', sorted);
+    this.logger.debug('Topological order: %O', sorted);
     return topology;
   }
 
