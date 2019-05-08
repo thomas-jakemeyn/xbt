@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DagService } from './adapter/dag.service';
 import { GitService } from './adapter/git.service';
 import { ConfigService } from './config/config.service';
-import { ManifestService } from './manifest/manifest.service';
+import { ManifestService, Manifest } from './manifest/manifest.service';
 import { PathService } from './util/path.service';
 import { DepsService } from './adapter/deps.service';
 import { Logger } from './logger/logger.service';
@@ -24,13 +24,11 @@ export class AppService {
 
   async run() {
     const { ref } = this.config;
-
-    const manifests = await this.manifestService.getManifests();
-    this.logger.info(':books: {black.bgYellow.bold MANIFESTS}');
-    this.logger.info('%O', manifests);
+    const manifests = await this.getManifests();
+    const manifestsArray = Object.values(manifests);
 
     const gitRoots = await this.gitService.getRoots({
-      items: Object.values(manifests),
+      items: manifestsArray,
     });
     this.logger.info('========== %o', 'GIT ROOTS');
     this.logger.info('%O', gitRoots);
@@ -50,7 +48,7 @@ export class AppService {
     this.logger.info('%O', manifests);
 
     const dag = this.dagService.newDag(manifests);
-    Object.values(manifests).forEach(manifest => {
+    manifestsArray.forEach(manifest => {
       if (manifest.changes.length > 0) {
         manifest.dirty = true;
         dag.getDependents(manifest).forEach(dependent => dependent.dirty = true);
@@ -72,5 +70,15 @@ export class AppService {
       .join(' \\\n&& ');
     this.logger.info('========== %o', 'SCRIPT');
     this.logger.info('%O', script);
+  }
+
+  async getManifests(): Promise<{[index: string]: Manifest}> {
+    this.logger.h1('Looking for manifest files...');
+    const manifests = await this.manifestService.getManifests();
+    const manifestNames = Object.keys(manifests);
+    const manifestsArray = Object.values(manifests);
+    this.logger.info('Found %o manifest(s): %O', manifestNames.length, manifestNames);
+    this.logger.debug('%O', manifestsArray);
+    return manifests;
   }
 }

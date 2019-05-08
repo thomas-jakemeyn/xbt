@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { DepsService } from 'src/adapter/deps.service';
 
-type LogMethod = (formatter: any, ...args: any[]) => void;
+type LogMethod = (template: any, ...args: any[]) => void;
 
 @Injectable()
 export class Logger {
   private readonly PREFIX = 'xbt';
+  private readonly STYLES = {
+    h1: 'black.bgYellow.bold',
+  };
   debug: LogMethod;
   info: LogMethod;
   warn: LogMethod;
@@ -18,6 +21,10 @@ export class Logger {
     this.error = this.createLogMethod(this.createNamespace(namespace, 'error'));
   }
 
+  h1(title: any) {
+    this.info(`{${this.STYLES.h1} ${title}}`);
+  }
+
   private createNamespace(...args: string[]): string {
     return [this.PREFIX, ...args]
       .filter(arg => !!arg)
@@ -26,11 +33,13 @@ export class Logger {
 
   private createLogMethod(namespace: string): LogMethod {
     const debug = this.deps.debug();
-    const log: LogMethod = debug(`${namespace}`);
+    const log: debug.Debugger = debug(`${namespace}`);
     const decorator: LogMethod = (template: any, ...args: any[]) => {
-      template = this.prettify(template);
-      args = args.map(arg => this.prettify(arg));
-      return log(template, ...args);
+      if (log.enabled) {
+        template = this.prettify(template);
+        args = args.map(arg => this.prettify(arg));
+        log(template, ...args);
+      }
     };
     return decorator;
   }
