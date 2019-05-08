@@ -96,8 +96,9 @@ export class AppService {
         const commands = this.lodash
           .at(manifest, cmdPaths)
           .filter(cmd => !!cmd);
-        return `(cd ${manifest.dir} && ${commands.join(' && ')})`;
-      });
+        return commands.length > 0 ? `(cd ${manifest.dir} && ${commands.join(' && ')})` : null;
+      })
+      .filter(cmd => !!cmd);
     this.logger.info('Commands: %O', script);
     return script;
   }
