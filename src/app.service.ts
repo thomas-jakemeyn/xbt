@@ -33,7 +33,7 @@ export class AppService {
   }
 
   async getManifests(): Promise<{[index: string]: Manifest}> {
-    this.logger.h1('Searching for components...');
+    this.logger.h1('Listing components...');
     const manifests = await this.manifestService.getManifests();
     const manifestNames = Object.keys(manifests);
     const manifestsArray = Object.values(manifests);
@@ -52,7 +52,7 @@ export class AppService {
   }
 
   async getChanges(ref, gitRoots: string[]): Promise<string[]> {
-    this.logger.h1('Detecting file changes...');
+    this.logger.h1(`Analyzing differences with ${ref}...`);
     const changesByGitRoot = await Promise.all(
       gitRoots.map(gitRoot => this.gitService.diff({ dir: gitRoot, ref })),
     );
@@ -62,16 +62,17 @@ export class AppService {
   }
 
   async attachChangesToManifests(changes: string[], manifests: {[index: string]: Manifest}) {
-    this.logger.h1('Linking file changes to components...');
+    this.logger.h1('Linking differences to components...');
     changes.forEach(change => {
       const manifest = this.pathService.findClosest({ path: change, candidates: manifests });
       manifest.changes.push(change);
     });
+    this.logger.info('Done');
     this.logger.debug('Manifests: %O', Object.values(manifests));
   }
 
   getTopology(manifests: {[index: string]: Manifest}): Manifest[] {
-    this.logger.h1('Building topology...');
+    this.logger.h1('Analyzing topology...');
     const dag = this.dagService.newDag(manifests);
     Object.values(manifests).forEach(manifest => {
       if (manifest.changes.length > 0) {
@@ -97,7 +98,7 @@ export class AppService {
           .filter(cmd => !!cmd);
         return `(cd ${manifest.dir} && ${commands.join(' && ')})`;
       });
-    this.logger.debug('Commands: %O', script);
+    this.logger.info('Commands: %O', script);
     return script;
   }
 }
