@@ -26,7 +26,7 @@ export class AppService {
     const { ref } = this.config;
 
     const manifests = await this.manifestService.getManifests();
-    this.logger.info(':books: MANIFESTS');
+    this.logger.info(':books: {black.bgYellow.bold MANIFESTS}');
     this.logger.info('%O', manifests);
 
     const gitRoots = await this.gitService.getRoots({

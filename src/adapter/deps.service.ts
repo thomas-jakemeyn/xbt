@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DGraph } from '@thi.ng/dgraph';
+import chalk from 'chalk';
 import * as debug from 'debug';
 import * as glob from 'glob';
 import * as git from 'isomorphic-git';
@@ -10,8 +11,12 @@ import * as yaml from 'yaml';
 @Injectable()
 export class DepsService {
 
-  debug(namespace: string) {
-    return debug(namespace);
+  chalk() {
+    return chalk;
+  }
+
+  debug() {
+    return debug;
   }
 
   emoji() {

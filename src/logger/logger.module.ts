@@ -5,7 +5,7 @@ import { DepsService } from 'src/adapter/deps.service';
 @Module({})
 export class LoggerModule {
 
-  static forFeature(namespace: string): DynamicModule {
+  static forFeature(namespace?: string): DynamicModule {
     const providers = LoggerModule.createProviders(namespace);
     return {
       module: LoggerModule,
@@ -14,13 +14,13 @@ export class LoggerModule {
     };
   }
 
-  private static createProviders(namespace: string): Provider[] {
+  private static createProviders(namespace?: string): Provider[] {
     return [
       this.createLoggerProvider(namespace),
     ];
   }
 
-  private static createLoggerProvider(namespace: string): Provider {
+  private static createLoggerProvider(namespace?: string): Provider {
     return {
       provide: Logger,
       useFactory: (deps: DepsService) => new Logger(deps, namespace),

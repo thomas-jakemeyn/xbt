@@ -6,7 +6,7 @@ import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
-    LoggerModule.forFeature('main'),
+    LoggerModule.forFeature(),
     ManifestModule,
   ],
   providers: [AppService],
