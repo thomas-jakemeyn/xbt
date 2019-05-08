@@ -13,7 +13,7 @@ export class GitService {
     this.git.plugins.set('fs', node.fs());
   }
 
-  async getRoots(args: { items: InDir[] }) {
+  async getRoots(args: { items: InDir[] }): Promise<string[]> {
     const promises = Promise.all(args.items.map(item => this.git.findRoot({ filepath: item.dir })));
     return [...new Set(await promises)];
   }
