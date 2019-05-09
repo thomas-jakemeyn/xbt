@@ -24,7 +24,7 @@ export class AppService {
       this.lodash = depsService.lodash();
     }
 
-  async run() {
+  async run(): Promise<string> {
     const { ref } = this.config;
     const manifests = await this.getManifests();
     const gitRoots = await this.getGitRoots(manifests);
@@ -32,7 +32,8 @@ export class AppService {
     this.attachChangesToManifests(changes, manifests);
     const topology = this.getTopology(manifests);
     const commands = this.getCommands(topology);
-    const script = await this.getScript(commands);
+    const output = await this.getOutput(commands);
+    return output;
   }
 
   async getManifests(): Promise<{[index: string]: Manifest}> {
@@ -107,10 +108,10 @@ export class AppService {
     return commands;
   }
 
-  async getScript(commands: string[]): Promise<string> {
-    this.logger.h1('Compiling script...');
-    const script = await this.templateService.compileDefault({ data: { commands } });
-    this.logger.info('Script: %O', script);
-    return script;
+  async getOutput(commands: string[]): Promise<string> {
+    this.logger.h1('Compiling output...');
+    const output = await this.templateService.compileDefault({ data: { commands } });
+    this.logger.info('{yellow.italic %s}', `\n\n${output}\n\n`);
+    return output;
   }
 }
