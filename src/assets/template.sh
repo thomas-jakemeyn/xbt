@@ -3,5 +3,5 @@
 set -e;
 
 {{#each commands}}
-  {{{ this }}}
+{{{ this }}};
 {{/each}}
