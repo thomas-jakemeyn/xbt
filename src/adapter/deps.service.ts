@@ -3,6 +3,7 @@ import { DGraph } from '@thi.ng/dgraph';
 import chalk from 'chalk';
 import * as debug from 'debug';
 import * as glob from 'glob';
+import * as Handlebars from 'handlebars';
 import * as git from 'isomorphic-git';
 import * as lodash from 'lodash';
 import * as emoji from 'node-emoji';
@@ -29,6 +30,10 @@ export class DepsService {
 
   glob() {
     return glob;
+  }
+
+  handlebars() {
+    return Handlebars;
   }
 
   lodash() {

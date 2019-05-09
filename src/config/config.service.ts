@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { NodeService } from 'src/adapter/node.service';
 
 export interface ConfigParams {
   cmd: string;
@@ -9,7 +10,14 @@ export interface ConfigParams {
 
 @Injectable()
 export class ConfigService {
-  constructor(private params: ConfigParams) {}
+  constructor(
+    private node: NodeService,
+    private params: ConfigParams) {}
+
+  get defaultTemplatePath(): string {
+    const path = this.node.path();
+    return path.normalize(path.join(__dirname, '..', 'assets', 'template.sh'));
+  }
 
   get cmd(): string[] {
     return this.params.cmd

@@ -5,6 +5,7 @@ import { GlobService } from './glob.service';
 import { NodeService } from './node.service';
 import { YamlService } from './yaml.service';
 import { DepsService } from './deps.service';
+import { TemplateService } from './template.service';
 
 const providers = [
   DagService,
@@ -12,6 +13,7 @@ const providers = [
   GitService,
   GlobService,
   NodeService,
+  TemplateService,
   YamlService,
 ];
 

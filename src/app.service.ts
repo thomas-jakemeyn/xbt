@@ -6,6 +6,7 @@ import { ManifestService, Manifest } from './manifest/manifest.service';
 import { PathService } from './util/path.service';
 import { DepsService } from './adapter/deps.service';
 import { Logger } from './logger/logger.service';
+import { TemplateService } from './adapter/template.service';
 
 @Injectable()
 export class AppService {
@@ -18,7 +19,8 @@ export class AppService {
     private gitService: GitService,
     private logger: Logger,
     private manifestService: ManifestService,
-    private pathService: PathService) {
+    private pathService: PathService,
+    private templateService: TemplateService) {
       this.lodash = depsService.lodash();
     }
 
@@ -30,6 +32,7 @@ export class AppService {
     this.attachChangesToManifests(changes, manifests);
     const topology = this.getTopology(manifests);
     const commands = this.getCommands(topology);
+    const script = await this.getScript(commands);
   }
 
   async getManifests(): Promise<{[index: string]: Manifest}> {
@@ -91,15 +94,23 @@ export class AppService {
   getCommands(topology: Manifest[]): string[] {
     this.logger.h1('Building commands...');
     const cmdPaths = this.config.cmd.map(cmd => `cmd.${cmd}`);
-    const script = topology
+    const commands = topology
       .map(manifest => {
-        const commands = this.lodash
+        const manifestCommands = this.lodash
           .at(manifest, cmdPaths)
           .filter(cmd => !!cmd);
-        return commands.length > 0 ? `(cd ${manifest.dir} && ${commands.join(' && ')})` : null;
+        return manifestCommands.length > 0 ? `(cd ${manifest.dir} && ${manifestCommands.join(' && ')})` : null;
       })
       .filter(cmd => !!cmd);
-    this.logger.info('Commands: %O', script);
+    this.logger.info('Done');
+    this.logger.debug('Commands: %O', commands);
+    return commands;
+  }
+
+  async getScript(commands: string[]): Promise<string> {
+    this.logger.h1('Compiling script...');
+    const script = await this.templateService.compileDefault({ data: { commands } });
+    this.logger.info('Script: %O', script);
     return script;
   }
 }
