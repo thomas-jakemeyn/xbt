@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "description": "Technology-agnostic incremental build tool for mono- and multi-repos",
   "license": "MIT",
+  "bin": {
+    "xbt": "dist/src/main.js"
+  },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf dist",
+    "build": "yarn clean && tsc -p tsconfig.build.json && yarn copy",
+    "copy": "yarn copyfiles ./src/assets/* ./dist",
+    "xbt": "yarn build && node dist/src/main.js",
     "format": "prettier --write \"src/**/*.ts\"",
-    "start": "DEBUG_COLORS=true yarn main",
-    "main": "ts-node -r tsconfig-paths/register src/main.ts",
-    "prestart:prod": "rimraf dist && npm run build",
-    "start:prod": "node dist/main.js",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -41,6 +43,7 @@
     "@types/lodash": "^4.14.123",
     "@types/node": "^11.13.8",
     "@types/yaml": "^1.0.2",
+    "copyfiles": "^2.1.0",
     "jest": "^24.7.1",
     "prettier": "^1.17.0",
     "rimraf": "^2.6.3",
