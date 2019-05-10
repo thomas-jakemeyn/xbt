@@ -1,6 +1,7 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { Logger } from './logger.service';
 import { DepsService } from 'src/adapter/deps.service';
+import { ConfigService } from 'src/config/config.service';
 
 @Module({})
 export class LoggerModule {
@@ -23,8 +24,8 @@ export class LoggerModule {
   private static createLoggerProvider(namespace?: string): Provider {
     return {
       provide: Logger,
-      useFactory: (deps: DepsService) => new Logger(deps, namespace),
-      inject: [DepsService],
+      useFactory: (config: ConfigService, deps: DepsService) => new Logger(config, deps, namespace),
+      inject: [ConfigService, DepsService],
     };
   }
 }

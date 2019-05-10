@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { DepsService } from 'src/adapter/deps.service';
+import { ConfigService } from 'src/config/config.service';
 
 type LogMethod = (template: any, ...args: any[]) => void;
 
+enum LogLevel {
+  DEBUG = 'xbt:debug',
+  INFO = 'xbt',
+  WARN = 'xbt:warn',
+  ERROR = 'xbt:error',
+}
+
 @Injectable()
 export class Logger {
-  private readonly PREFIX = 'xbt';
   private readonly STYLES = {
     h1: 'yellow.bold.underline',
   };
@@ -14,26 +21,21 @@ export class Logger {
   warn: LogMethod;
   error: LogMethod;
 
-  constructor(private deps: DepsService, namespace?: string) {
-    this.debug = this.createLogMethod(this.createNamespace(namespace, 'debug'));
-    this.info = this.createLogMethod(this.createNamespace(namespace));
-    this.warn = this.createLogMethod(this.createNamespace(namespace, 'warn'));
-    this.error = this.createLogMethod(this.createNamespace(namespace, 'error'));
+  constructor(private config: ConfigService, private deps: DepsService, namespace?: string) {
+    this.debug = this.createLogMethod(LogLevel.DEBUG, namespace);
+    this.info = this.createLogMethod(LogLevel.INFO, namespace);
+    this.warn = this.createLogMethod(LogLevel.WARN, namespace);
+    this.error = this.createLogMethod(LogLevel.ERROR, namespace);
   }
 
   h1(title: any) {
     this.info(`{${this.STYLES.h1} ${title}}`);
   }
 
-  private createNamespace(...args: string[]): string {
-    return [this.PREFIX, ...args]
-      .filter(arg => !!arg)
-      .join(':');
-  }
-
-  private createLogMethod(namespace: string): LogMethod {
+  private createLogMethod(level: LogLevel, namespace: string): LogMethod {
     const debug = this.deps.debug();
-    const log: debug.Debugger = debug(`${namespace}`);
+    const fullyQualifiedNamespace = this.createNamespace(level, namespace);
+    const log: debug.Debugger = debug(fullyQualifiedNamespace);
     const decorator: LogMethod = (template: any, ...args: any[]) => {
       if (log.enabled) {
         template = this.prettify(template);
@@ -41,7 +43,16 @@ export class Logger {
         log(template, ...args);
       }
     };
+    if (!process.env.DEBUG) {
+      log.enabled = this.config.verbose || level !== LogLevel.DEBUG;
+    }
     return decorator;
+  }
+
+  private createNamespace(...args: string[]): string {
+    return args
+      .filter(arg => !!arg)
+      .join(':');
   }
 
   private prettify(arg: any) {
