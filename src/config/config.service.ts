@@ -2,28 +2,28 @@ import { Injectable } from '@nestjs/common';
 import { NodeService } from 'src/adapter/node.service';
 
 export interface ConfigParams {
-  cmd: string;
+  cmd: string[];
   manifestGlob: string;
+  templatePath: string;
   ref: string;
   rootDir: string;
+  verbose: boolean;
 }
 
 @Injectable()
 export class ConfigService {
-  constructor(
-    private node: NodeService,
-    private params: ConfigParams) {}
+  private params: ConfigParams;
 
-  get defaultTemplatePath(): string {
-    const path = this.node.path();
-    return path.normalize(path.join(__dirname, '..', 'assets', 'template.sh'));
+  constructor(params: ConfigParams) {
+      this.params = Object.freeze(params);
+    }
+
+  get templatePath(): string {
+    return this.params.templatePath;
   }
 
   get cmd(): string[] {
-    return this.params.cmd
-      .split('&&')
-      .filter(cmd => !!cmd)
-      .map(cmd => cmd.trim());
+    return this.params.cmd;
   }
 
   get manifestGlob() {
@@ -36,5 +36,13 @@ export class ConfigService {
 
   get rootDir() {
     return this.params.rootDir;
+  }
+
+  get verbose() {
+    return this.params.verbose;
+  }
+
+  raw() {
+    return this.params;
   }
 }

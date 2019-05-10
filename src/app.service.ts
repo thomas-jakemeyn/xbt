@@ -25,6 +25,9 @@ export class AppService {
     }
 
   async run(): Promise<string> {
+    this.logger.h1('Initializing tool...');
+    this.logger.info('Got the following configuration parameters: %O', this.config.raw());
+
     const { ref } = this.config;
     const manifests = await this.getManifests();
     const gitRoots = await this.getGitRoots(manifests);
@@ -110,7 +113,7 @@ export class AppService {
 
   async getOutput(commands: string[]): Promise<string> {
     this.logger.h1('Compiling output...');
-    const output = await this.templateService.compileDefault({ data: { commands } });
+    const output = await this.templateService.compilePath({ templatePath: this.config.templatePath, data: { commands } });
     this.logger.info('{yellow.italic %s}', `\n\n${output}\n\n`);
     return output;
   }

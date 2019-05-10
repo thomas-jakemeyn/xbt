@@ -1,6 +1,5 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { ConfigService } from './config.service';
-import { NodeService } from 'src/adapter/node.service';
 
 @Module({})
 export class ConfigModule {
@@ -23,8 +22,7 @@ export class ConfigModule {
   private static createConfigServiceProvider(params): Provider<ConfigService> {
     return {
       provide: ConfigService,
-      useFactory: (node: NodeService) => new ConfigService(node, params),
-      inject: [NodeService],
+      useFactory: () => new ConfigService(params),
     };
   }
 }
