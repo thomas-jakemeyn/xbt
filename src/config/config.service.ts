@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { NodeService } from 'src/adapter/node.service';
 
 export interface ConfigParams {
   cmd: string[];

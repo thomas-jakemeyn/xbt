@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { Test } from '@nestjs/testing';
-import { NodeService } from 'src/adapter/node.service';
 import { PathService } from './path.service';
+import { NodeService } from '../adapter/node.service';
 
 describe('PathService', () => {
   let pathService: PathService;

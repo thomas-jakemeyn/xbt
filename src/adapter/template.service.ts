@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { promisify } from 'util';
 import { NodeService } from './node.service';
 import { DepsService } from './deps.service';
-import { ConfigService } from 'src/config/config.service';
+import { ConfigService } from '../config/config.service';
 
 @Injectable()
 export class TemplateService {

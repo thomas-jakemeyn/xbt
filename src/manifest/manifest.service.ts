@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { GlobService } from 'src/adapter/glob.service';
-import { NodeService } from 'src/adapter/node.service';
-import { YamlService } from 'src/adapter/yaml.service';
-import { ConfigService } from 'src/config/config.service';
+import { ConfigService } from '../config/config.service';
+import { GlobService } from '../adapter/glob.service';
+import { NodeService } from '../adapter/node.service';
+import { YamlService } from '../adapter/yaml.service';
 
 @Injectable()
 export class ManifestService {

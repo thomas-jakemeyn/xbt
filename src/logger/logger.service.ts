@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DepsService } from 'src/adapter/deps.service';
-import { ConfigService } from 'src/config/config.service';
+import { ConfigService } from '../config/config.service';
+import { DepsService } from '../adapter/deps.service';
 
 type LogMethod = (template: any, ...args: any[]) => void;
 

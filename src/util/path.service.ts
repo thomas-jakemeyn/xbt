@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { NodeService } from 'src/adapter/node.service';
+import { NodeService } from '../adapter/node.service';
 
 @Injectable()
 export class PathService {

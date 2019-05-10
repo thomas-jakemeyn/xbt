@@ -1,7 +1,7 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
 import { Logger } from './logger.service';
-import { DepsService } from 'src/adapter/deps.service';
-import { ConfigService } from 'src/config/config.service';
+import { ConfigService } from '../config/config.service';
+import { DepsService } from '../adapter/deps.service';
 
 @Module({})
 export class LoggerModule {
