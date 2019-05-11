@@ -18,6 +18,7 @@ async function bootstrap(config: ConfigParams) {
 const argv = program
   .version(pkg.version)
   .usage('[options] <command ...>')
+  .option('-a, --all', 'Involve all the components, not only the dirty ones')
   .option('-g, --glob <pattern>', 'The glob pattern matching the manifest files', '**/.xbt.yml')
   .option('-r, --ref <ref>', 'The git reference to compare with', 'develop')
   .option('-t, --template <path>', 'The path to the template file to compile')
@@ -26,6 +27,7 @@ const argv = program
 
 const params: ConfigParams = {
   cmd: argv.args.length > 0 ? argv.args : ['build'],
+  includeAll: !!argv.all,
   manifestGlob: argv.glob,
   ref: argv.ref,
   rootDir: process.cwd(),

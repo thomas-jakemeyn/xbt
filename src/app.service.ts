@@ -88,8 +88,8 @@ export class AppService {
       }
     });
     const sorted = dag.sort();
-    const topology = sorted.filter(manifest => manifest.dirty);
-    this.logger.info('Identified %o dirty components: %O',
+    const topology = sorted.filter(manifest => this.config.includeAll || manifest.dirty);
+    this.logger.info('Included %o components: %O',
       topology.length, topology.map(manifest => manifest.name));
     this.logger.debug('Topological order: %O', sorted);
     return topology;

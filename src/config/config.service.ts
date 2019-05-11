@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 export interface ConfigParams {
   cmd: string[];
+  includeAll: boolean;
   manifestGlob: string;
   templatePath: string;
   ref: string;
@@ -17,12 +18,12 @@ export class ConfigService {
       this.params = Object.freeze(params);
     }
 
-  get templatePath(): string {
-    return this.params.templatePath;
-  }
-
   get cmd(): string[] {
     return this.params.cmd;
+  }
+
+  get includeAll(): boolean {
+    return this.params.includeAll;
   }
 
   get manifestGlob() {
@@ -35,6 +36,10 @@ export class ConfigService {
 
   get rootDir() {
     return this.params.rootDir;
+  }
+
+  get templatePath(): string {
+    return this.params.templatePath;
   }
 
   get verbose() {
