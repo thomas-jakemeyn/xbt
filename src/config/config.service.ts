@@ -31,6 +31,10 @@ export class ConfigService {
     return this.params.manifestGlob;
   }
 
+  get outputPath() {
+    return this.params.outputPath;
+  }
+
   get ref() {
     return this.params.ref;
   }

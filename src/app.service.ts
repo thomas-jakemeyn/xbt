@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { promisify } from 'util';
 import { DagService } from './adapter/dag.service';
-import { GitService } from './adapter/git.service';
-import { ConfigService } from './config/config.service';
-import { ManifestService, Manifest } from './manifest/manifest.service';
-import { PathService } from './util/path.service';
 import { DepsService } from './adapter/deps.service';
-import { Logger } from './logger/logger.service';
+import { GitService } from './adapter/git.service';
+import { NodeService } from './adapter/node.service';
 import { TemplateService } from './adapter/template.service';
+import { ConfigService } from './config/config.service';
+import { Logger } from './logger/logger.service';
+import { Manifest, ManifestService } from './manifest/manifest.service';
+import { PathService } from './util/path.service';
 
 @Injectable()
 export class AppService {
@@ -19,6 +21,7 @@ export class AppService {
     private gitService: GitService,
     private logger: Logger,
     private manifestService: ManifestService,
+    private node: NodeService,
     private pathService: PathService,
     private templateService: TemplateService) {
       this.lodash = depsService.lodash();
@@ -36,6 +39,7 @@ export class AppService {
     const topology = this.getTopology(manifests);
     const commands = this.getCommands(topology);
     const output = await this.getOutput(commands);
+    await this.writeOutput(output);
     return output;
   }
 
@@ -114,7 +118,20 @@ export class AppService {
   async getOutput(commands: string[]): Promise<string> {
     this.logger.h1('Compiling output...');
     const output = await this.templateService.compilePath({ templatePath: this.config.templatePath, data: { commands } });
-    this.logger.info('{yellow.italic %s}', `\n\n${output}\n\n`);
+    this.logger.info('Done');
     return output;
+  }
+
+  async writeOutput(output: string): Promise<void> {
+    this.logger.h1('Writing output...');
+    const outputPath = this.config.outputPath;
+    if (!outputPath || this.config.verbose) {
+      this.logger.info('{yellow.italic %s}', `\n\n${output}\n\n`);
+    }
+    if (outputPath) {
+      const writeFile = promisify(this.node.fs().writeFile);
+      await writeFile(outputPath, output);
+      this.logger.info('Done');
+    }
   }
 }
