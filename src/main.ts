@@ -15,13 +15,18 @@ async function bootstrap(config: ConfigParams) {
   await appService.run();
 }
 
+const templates = {
+  sh: path.resolve(__dirname, 'assets', 'template.sh'),
+};
+
 const argv = program
   .version(pkg.version)
   .usage('[options] <command ...>')
   .option('-a, --all', 'Involve all the components, not only the dirty ones')
   .option('-g, --glob <pattern>', 'The glob pattern matching the manifest files', '**/.xbt.yml')
+  .option('-p, --path <template>', 'The path to the template file to compile (takes precedence over -t option)')
   .option('-r, --ref <ref>', 'The git reference to compare with', 'develop')
-  .option('-t, --template <path>', 'The path to the template file to compile')
+  .option('-t, --template <key>', 'The key of the pre-defined template to compile', /^(sh)$/i, 'sh')
   .option('-v, --verbose', 'A flag to enable debug logs')
   .parse(process.argv);
 
@@ -31,7 +36,7 @@ const params: ConfigParams = {
   manifestGlob: argv.glob,
   ref: argv.ref,
   rootDir: process.cwd(),
-  templatePath: path.normalize(argv.template || path.join(__dirname, 'assets', 'template.sh')),
+  templatePath: path.resolve(process.cwd(), argv.path) || templates[argv.template],
   verbose: !!argv.verbose,
 };
 
