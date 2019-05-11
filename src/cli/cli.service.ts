@@ -11,7 +11,7 @@ export class CliService {
   parseParams(argv): ConfigParams {
     const parsed = program
       .version(pkg.version)
-      .usage('[options] <command ...>')
+      .usage('[options] command')
       .option('-a, --all', 'Involve all the components, not only the dirty ones')
       .option('-g, --glob <pattern>', 'The glob pattern matching the manifest files', '**/.xbt.yml')
       .option('-o, --output <path>', 'The path to the output file to create (defaults to console log)')

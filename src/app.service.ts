@@ -101,11 +101,12 @@ export class AppService {
 
   getCommands(topology: Manifest[]): string[] {
     this.logger.h1('Building commands...');
-    const cmdPaths = this.config.cmd.map(cmd => `cmd.${cmd}`);
+    const cmdPaths = this.config.cmd.map(cmd => `cmd.${cmd.key}`);
     const commands = topology
       .map(manifest => {
         const manifestCommands = this.lodash
           .at(manifest, cmdPaths)
+          .map((cmd, i) => cmd ? `${cmd} ${this.config.cmd[i].args.join(' ')}` : null)
           .filter(cmd => !!cmd);
         return manifestCommands.length > 0 ? `(cd ${manifest.dir} && ${manifestCommands.join(' && ')})` : null;
       })

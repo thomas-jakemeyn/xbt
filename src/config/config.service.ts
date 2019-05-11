@@ -11,6 +11,11 @@ export interface ConfigParams {
   verbose: boolean;
 }
 
+export interface Command {
+  key: string;
+  args: string[];
+}
+
 @Injectable()
 export class ConfigService {
   private params: ConfigParams;
@@ -19,8 +24,22 @@ export class ConfigService {
       this.params = Object.freeze(params);
     }
 
-  get cmd(): string[] {
-    return this.params.cmd;
+  get cmd(): Command[] {
+    return this.params.cmd
+      .join(' ')
+      .split('&&')
+      .map(cmd => cmd.trim())
+      .filter(cmd => !!cmd)
+      .map(cmd => {
+        const parts = cmd
+          .split(' ')
+          .map(part => part.trim())
+          .filter(part => !!part);
+        return {
+          key: parts[0],
+          args: parts.slice(1),
+        } as Command;
+      });
   }
 
   get includeAll(): boolean {
