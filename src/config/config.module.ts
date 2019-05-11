@@ -1,10 +1,10 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
-import { ConfigService } from './config.service';
+import { ConfigService, ConfigParams } from './config.service';
 
 @Module({})
 export class ConfigModule {
 
-  static forRoot(params): DynamicModule {
+  static forRoot(params: ConfigParams): DynamicModule {
     const providers = ConfigModule.createProviders(params);
     return {
       module: ConfigModule,
@@ -13,13 +13,13 @@ export class ConfigModule {
     };
   }
 
-  private static createProviders(params): Provider[] {
+  private static createProviders(params: ConfigParams): Provider[] {
     return [
       ConfigModule.createConfigServiceProvider(params),
     ];
   }
 
-  private static createConfigServiceProvider(params): Provider<ConfigService> {
+  private static createConfigServiceProvider(params: ConfigParams): Provider<ConfigService> {
     return {
       provide: ConfigService,
       useFactory: () => new ConfigService(params),

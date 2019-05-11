@@ -2,6 +2,7 @@ import { DynamicModule, Global, Module } from '@nestjs/common';
 import { AdapterModule } from './adapter/adapter.module';
 import { ConfigModule } from './config/config.module';
 import { UtilModule } from './util/util.module';
+import { ConfigParams } from './config/config.service';
 
 @Global()
 @Module({
@@ -9,7 +10,7 @@ import { UtilModule } from './util/util.module';
   exports: [AdapterModule, UtilModule],
 })
 export class GlobalModule {
-  static forRoot(params): DynamicModule {
+  static forRoot(params: ConfigParams): DynamicModule {
     const dynamicGlobals = [ConfigModule.forRoot(params)];
     return {
       module: GlobalModule,

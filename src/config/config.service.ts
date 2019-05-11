@@ -4,6 +4,7 @@ export interface ConfigParams {
   cmd: string[];
   includeAll: boolean;
   manifestGlob: string;
+  outputPath: string;
   templatePath: string;
   ref: string;
   rootDir: string;
