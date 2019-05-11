@@ -12,7 +12,7 @@ async function bootstrap() {
   const params = cliService.parseParams(process.argv);
 
   const appModule = AppModule.forRoot(params);
-  const appContext = await NestFactory.createApplicationContext(appModule, { logger: params.verbose });
+  const appContext = await NestFactory.createApplicationContext(appModule, { logger: false });
   const appService = appContext.get<AppService>(AppService);
   await appService.run();
 }
