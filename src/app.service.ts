@@ -38,7 +38,13 @@ export class AppService {
     this.attachChangesToManifests(changes, manifests);
     const topology = this.getTopology(manifests);
     const commands = this.getCommands(topology);
-    const output = await this.getOutput(commands);
+    const output = await this.getOutput({
+      commands,
+      config: this.config.raw(),
+      gitRoots,
+      manifests,
+      topology,
+    });
     await this.writeOutput(output);
     return output;
   }
@@ -99,26 +105,25 @@ export class AppService {
     return topology;
   }
 
-  getCommands(topology: Manifest[]): string[] {
+  getCommands(topology: Manifest[]): CommandLine[] {
     this.logger.h1('Building commands...');
     const cmdPaths = this.config.cmd.map(cmd => `cmd.${cmd.key}`);
-    const commands = topology
-      .map(manifest => {
-        const manifestCommands = this.lodash
-          .at(manifest, cmdPaths)
-          .map((cmd, i) => cmd ? `${cmd} ${this.config.cmd[i].args.join(' ')}` : null)
-          .filter(cmd => !!cmd);
-        return manifestCommands.length > 0 ? `(cd ${manifest.dir} && ${manifestCommands.join(' && ')})` : null;
-      })
-      .filter(cmd => !!cmd);
+    const commands = this.lodash.flatten(
+      topology.map(manifest => this.lodash
+        .at(manifest, cmdPaths)
+        .map((cmd, i) => cmd ? {
+          dir: manifest.dir,
+          cmd: [cmd, ...this.config.cmd[i].args].join(' '),
+        } as CommandLine : null)
+        .filter(cmd => !!cmd)));
     this.logger.info('Done');
     this.logger.debug('Commands: %O', commands);
     return commands;
   }
 
-  async getOutput(commands: string[]): Promise<string> {
+  async getOutput(data: TemplateData): Promise<string> {
     this.logger.h1('Compiling output...');
-    const output = await this.templateService.compilePath({ templatePath: this.config.templatePath, data: { commands } });
+    const output = await this.templateService.compilePath({ templatePath: this.config.templatePath, data });
     this.logger.info('Done');
     return output;
   }
@@ -135,4 +140,17 @@ export class AppService {
       this.logger.info('Done');
     }
   }
+}
+
+export interface CommandLine {
+  cmd: string;
+  dir: string;
+}
+
+export interface TemplateData {
+  commands: CommandLine[];
+  config: any;
+  gitRoots: string[];
+  manifests: {[index: string]: Manifest};
+  topology: Manifest[];
 }

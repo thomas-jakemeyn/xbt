@@ -3,5 +3,5 @@
 set -e;
 
 {{#each commands}}
-{{{ this }}};
+(cd "{{this.dir}}" && {{this.cmd}});
 {{/each}}
