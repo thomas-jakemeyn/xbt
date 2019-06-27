@@ -108,14 +108,13 @@ export class AppService {
   getCommands(topology: Manifest[]): CommandLine[] {
     this.logger.h1('Building commands...');
     const cmdPaths = this.config.cmd.map(cmd => `cmd.${cmd.key}`);
-    const commands = this.lodash.flatten(
-      topology.map(manifest => this.lodash
+    const commands = topology.map(manifest => this.lodash
         .at(manifest, cmdPaths)
         .map((cmd, i) => cmd ? {
           dir: manifest.dir,
           cmd: [cmd, ...this.config.cmd[i].args].join(' '),
         } as CommandLine : null)
-        .filter(cmd => !!cmd)));
+        .filter(cmd => !!cmd));
     this.logger.info('Done');
     this.logger.debug('Commands: %O', commands);
     return commands;
@@ -143,6 +142,7 @@ export class AppService {
 }
 
 export interface CommandLine {
+  // TODO: cmd: string[]
   cmd: string;
   dir: string;
 }
